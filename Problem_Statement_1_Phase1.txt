@@ -1,0 +1,99 @@
+Background Context
+We have spent the last decade perfecting the vertical scale of isolated models.
+We know
+ how to build massive context windows, and we know how to orchestrate fragile, brittle
+ multi-agent pipelines using hardcoded text routers.
+But this is a dead end for true Artificial
+ Superintelligence (ASI).
+True ASI requires horizontal scale-out - a self-evolving, internet-scale ecosystem where
+ heterogeneous Al entities and human specialists don't just pass text tokens back and forth,
+ but actually think together.
+To achieve this, we need to move past application-layer hacks and build the foundational
+ infrastructure: The Internet of Cognition (IOC).
+Task
+You are tasked with building a resilient, secure mini-prototype of this cognitive network
+ layer.
+There are no fixed test cases to pass; your success will be measured by the
+ architectural trade-offs you make, the technical credibility of your design, and your defense
+ of your engineering choices.
+Phase 1 submissions will be evaluated by an automated Al engine using organizer-defined
+ Phase 1 evaluation criteria.
+Teams that clear the qualification threshold should unlock
+ Phase 2 immediately.
+Teams that do not clear the threshold may still be moved to Phase 2
+ later under organizer-controlled progression rules.
+Phase 1 is intended to be a compact qualification round. Teams are not expected to build a
+ production-ready system here.
+A tightly scoped but technically credible handshake
+ prototype, simulation, or proof-of-concept is sufficient if it clearly demonstrates the core
+ protocol behavior.
+The Scenario
+Phase 1: The Semantic Handshake & Intent Alignment
+When two highly specialized, autonomous Al agents, operating on entirely different
+ underlying model architectures and optimization goals, try to collaborate over a standard
+ network, they suffer from semantic isolation.
+If Agent A is optimizing for ultra-low-latency
+ network routing and Agent B is optimizing for maximum zero-trust security compliance,
+ they don't just speak different data schemas;
+they have conflicting core intents. Passing raw
+ text strings or JSON payloads back and forth leads to optimization deadlocks, hallucinated
+ boundaries, or catastrophic failures.
+Your Task
+Design and implement a lightweight, programmatic Cognition State Protocol (CSP) layer.
+You must construct a mechanism where two simulation agents with opposing optimization
+ targets (for example, Agent 1: Maximize Throughput vs. Agent 2: Maximum Security
+ Inspection) can dynamically discover each other's operational states, negotiate their
+ constraints, and achieve a stable shared Intent Handshake without a central human-in-the-
+ loop coordinator.
+The system should establish a unified, machine-readable intent state that both agents agree
+ to bound their behavior by.
+Strategic Goals to Deliver (The Phase 1 Review)
+Before moving to Phase 2, your team must commit its Phase 1 architectural blueprint.
+You
+ must provide clear technical justification answering the following questions.
+Submission format for Phase 1: Responses to Questions 1-2 must be limited to 200-300
+ words each.
+Response to Question 3 must be limited to 250-350 words.
+Question 4 should
+ be limited to a maximum of 2 pages in the submission template.
+If Al tools were used,
+ prompt or prompt-summary disclosure for Question 5 must be limited to 500 words total.
+Question 1 - State Synchronization vs. Payload Overhead: How did you design your protocol
+ to communicate deep semantic intent without bloating the network layer with massive,
+ token-heavy prompt histories?
+What structural format did you choose to represent intent
+ (for example, custom graph structures, vectorized state vectors, or lightweight protocol
+ buffers), and why?
+Question 2 - Conflict Resolution Mechanics: When Agent 1 and Agent 2 hit an optimization
+ impasse, how does your protocol prevent an endless loop of negotiations and arrive at a
+ bounded decision?
+What conflict-resolution approach did you choose (for example,
+ bounded arbitration, weighted priority, deterministic tie-breaking, consensus logic, or
+ another compact mechanism), and why is your approach stable and technically defensible?
+Question 3 - Semantic Security Gap and Minimum-Disclosure Negotiation: What are the
+ primary confidentiality and leakage risks in agent-to-agent intent negotiation, and how does
+ your protocol prevent exposure of sensitive enterprise context or proprietary model
+ boundaries during the handshake?
+What minimum-disclosure mechanism allows agents to
+ align on intent without exposing private business logic, hidden reasoning traces, or internal
+ model weights?
+Describe the cryptographic, structural, or policy controls used.
+Question 4 - Within this submission document, describe one small end-to-end handshake
+ example between two opposing agents.
+Your answer must be included only in the Word
+ submission document and must fit within a maximum of 2 pages in the submission
+ template.
+Include brief code snippets, pseudocode, protocol messages, the input state, the
+ negotiation steps, and the final shared intent state, as applicable.
+You may show state
+ information in text, tables, key-value form, or JSON-style snippets.
+Do not include diagrams,
+ images, links, or separate repository material for this question.
+You are not required to
+ build a full system; one clear and complete example is sufficient.
+Question 5 - If Al tools were used for any part of the work, disclose the prompts or prompt
+ summaries needed to understand the Al-assisted portions.
+Full verbatim prompts are not
+ mandatory if a clear summary is provided.
+Prompt disclosure must be limited to 500 words
+ total.

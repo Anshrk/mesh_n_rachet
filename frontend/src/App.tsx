@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { io } from 'socket.io-client';
 import { Activity, ShieldAlert, Zap, BrainCircuit, Play, Square, GitMerge, Info } from 'lucide-react';
+import { NetworkGraph } from './NetworkGraph';
 import type { Insight } from './types';
 import './index.css';
 
@@ -12,15 +13,16 @@ function App() {
   const [isSimulating, setIsSimulating] = useState(false);
   const [activeTask, setActiveTask] = useState<{agent: string, desc: string, status: string, similarity?: number} | null>(null);
   
+  // CSP State
+  const [cspActive, setCspActive] = useState<{a1: string, a2: string} | null>(null);
+  const [cspLogs, setCspLogs] = useState<string[]>([]);
+  
   const logEndRef = useRef<HTMLDivElement>(null);
+  const cspLogEndRef = useRef<HTMLDivElement>(null);
 
-  const addLog = (msg: string, type: 'info'|'error'|'success'|'warn'|'ai'|'fast' = 'info') => {
+  const addLog = (msg: string, type: 'info'|'error'|'success'|'warn'|'ai'|'fast'|'csp' = 'info') => {
     setLogs(prev => [...prev.slice(-49), { msg: `[${new Date().toLocaleTimeString()}] ${msg}`, type }]);
   };
-
-  useEffect(() => {
-    logEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [logs]);
 
   useEffect(() => {
     socket.on('initial_state', (data: Insight[]) => {
@@ -31,6 +33,22 @@ function App() {
     socket.on('observer_status', (data: {status: string}) => {
       setIsSimulating(data.status === 'running');
       addLog(`Simulation is now ${data.status}`, "info");
+      if (data.status === 'stopped') setCspActive(null);
+    });
+
+    socket.on('csp_started', (data: {a1: string, a2: string}) => {
+      setCspActive(data);
+      setCspLogs([]);
+      addLog(`[CSP] Intent Handshake started between ${data.a1} and ${data.a2}`, "csp");
+    });
+
+    socket.on('csp_update', (data: {message: string}) => {
+      setCspLogs(prev => [...prev, data.message]);
+    });
+
+    socket.on('csp_resolved', (data: any) => {
+      setCspLogs(prev => [...prev, `[CSP] Contract Signed: Session ${data.session_id}`]);
+      setTimeout(() => setCspActive(null), 2500);
     });
 
     socket.on('agent_task_detected', (data: {agent_id: string, description: string}) => {
@@ -83,6 +101,9 @@ function App() {
     return () => {
       socket.off('initial_state');
       socket.off('observer_status');
+      socket.off('csp_started');
+      socket.off('csp_update');
+      socket.off('csp_resolved');
       socket.off('agent_task_detected');
       socket.off('agent_fast_path');
       socket.off('agent_reasoning');
@@ -169,7 +190,22 @@ function App() {
         </button>
       </div>
 
-      {activeTask && (
+      {cspActive && (
+        <div className="csp-banner">
+          <div className="csp-header">
+            <Activity className="spinner" />
+            <h3 style={{ margin: 0 }}>Phase 1 CSP Handshake: {cspActive.a1} ⚡ {cspActive.a2}</h3>
+          </div>
+          <div className="csp-logs">
+            {cspLogs.map((log, i) => (
+              <div key={i}>{log}</div>
+            ))}
+            <div ref={cspLogEndRef} />
+          </div>
+        </div>
+      )}
+
+      {activeTask && !cspActive && (
         <div className="active-task-banner">
           <Activity className="spinner" />
           <div style={{ flex: 1 }}>
@@ -203,23 +239,8 @@ function App() {
               </div>
             </div>
             <div>
-               <h3 style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Semantic Clusters (SQLite Vector Engine)</h3>
-               <div className="insights-container" style={{ height: '400px', overflowY: 'auto', display: 'flex', flexWrap: 'wrap', gap: '1rem', alignContent: 'flex-start' }}>
-                 {globalFabric.length === 0 ? <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Awaiting first breakthrough...</p> : null}
-                 {globalFabric.map((insight, i) => (
-                   <div key={i} className="semantic-node">
-                     <div className="node-glow"></div>
-                     <div className="insight-header">
-                       <span className="badge badge-info">{(insight.confidence_score * 100).toFixed(0)}% CONF</span>
-                       <small style={{ color: 'var(--text-muted)' }}>{insight.source_agent_id}</small>
-                     </div>
-                     <strong style={{ display: 'block', margin: '0.5rem 0', color: 'var(--primary)', fontFamily: 'monospace' }}>
-                       {insight.problem_signature}
-                     </strong>
-                     <p style={{ margin: '0', fontSize: '0.85rem', color: 'var(--text-main)' }}>{insight.solution}</p>
-                   </div>
-                 ))}
-               </div>
+               <h3 style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Semantic Clusters (Cognition Fabric Vector Engine)</h3>
+               <NetworkGraph insights={globalFabric} />
             </div>
           </div>
         </div>
