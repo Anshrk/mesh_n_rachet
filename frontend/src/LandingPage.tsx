@@ -58,8 +58,8 @@ const stack = [
   },
   {
     icon: <Database size={20} />,
-    name: 'ChromaDB',
-    role: 'Vector store powering the shared cognition fabric.',
+    name: 'SQLite Vector Engine',
+    role: 'Lightweight in-memory vector storage for fast cosine similarity clustering.',
   },
   {
     icon: <Gauge size={20} />,
