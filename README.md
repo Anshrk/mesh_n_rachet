@@ -1,44 +1,77 @@
-# Phase 2: The Continuous Mesh & The Ratchet Effect
+# 🌌 Cognition Fabric: The Ratchet Effect
 
-## Project Overview
-This project implements a **Cognition Fabric** demonstration to address the problem of transient memory in multi-agent systems. The goal is to unlock the **ratchet effect**: a mechanism where an insight, optimization, or mitigation strategy discovered by one agent is propagated and retained by a secure, distributed mesh. This ensures the network does not have to solve the same edge-case problem repeatedly.
+*A decentralized, continuously learning semantic memory mesh designed for autonomous multi-agent systems.*
 
-## Core Scenario
-In current multi-agent setups, when an API session drops or a pipeline closes, immediate contextual learning vanishes. The system requires a Cognition Fabric—a distributed mesh storing collective memory—so that local breakthroughs become global knowledge safely and efficiently.
+## 🏆 Hackathon Overview
 
-## Core Capabilities to Implement
-Your implementation must demonstrate the following in a compact, credible working prototype or simulation:
-1. **Dynamic Task Flow:** A flow of incoming enterprise-style tasks or incidents that forces agents to make and reuse decisions under changing conditions.
-2. **Cognition Fabric Layer:** A shared memory mechanism (e.g., decentralized ledger, distributed state cache) that captures a localized breakthrough from one agent.
-3. **Accelerator Mechanism:** A pipeline/mechanism that propagates a verified insight from one agent or node into shared collective memory.
-4. **Autonomous Guardrail:** A verification layer that checks whether a proposed update violates policy, security, or compliance rules *before* it is accepted into the Fabric.
-5. **The Ratchet Effect:** A visible demonstration of another agent, node, or later task reusing a previously captured insight.
+In current multi-agent setups, when a pipeline closes or an agent is destroyed, immediate contextual learning vanishes. If Agent A figures out how to fix a database anomaly, Agent B will still fail on the same anomaly 5 minutes later. 
 
-## Bonus Challenge
-**Chaos Injector:** Build a lightweight script or mechanism simulating a network fault, bad update, or policy violation. Demonstrate how the system:
-- Detects the issue
-- Blocks or repairs the bad propagation
-- Preserves the integrity of the Fabric
+**Cognition Fabric** solves the problem of transient memory by unlocking the **Ratchet Effect**: a mathematical vector-based mechanism where an insight, optimization, or mitigation strategy discovered by one agent is securely propagated and retained by a distributed mesh. This ensures the network never has to solve the same problem twice.
 
-## Strategic Goals & Design Dilemmas (The Final Defence)
-The architecture and implementation must address and defend against the following hard dilemmas. Keep these in mind while designing the system:
+## 🧠 Architectural Approach
 
-1. **Validating Innovation vs. Hallucination:** 
-   - *Challenge:* Distinguish between a genuine breakthrough and an invalid, convincing hallucination.
-   - *Requirement:* Implement strong verification logic, consensus, or scoring before broadcasting to the global Fabric.
-2. **Mitigating Cognitive Drift & Poisoning:**
-   - *Challenge:* Prevent rogue or compromised agents from injecting malicious or low-quality optimizations.
-   - *Requirement:* Detect, isolate, and prune poisoned cognitive updates without resetting the collective memory back to zero.
-3. **Managing Fabric Consistency at Scale:**
-   - *Challenge:* Handle conflicting fixes that are valid in different contexts without split-brain behavior.
-   - *Requirement:* Define a clear consistency model (e.g., eventual consistency, scoped consistency, semantic locking) and handle contextual trade-offs.
+We have designed a layered architecture that prioritizes speed, security, and true semantic understanding:
 
-## Architecture Guidelines for AI
-- **Focus:** Depth matters more than breadth. Show one convincing end-to-end propagation scenario rather than sketching many features without proving them.
-- **Scope:** You do not need to build an internet-scale system. A mocked architecture or local simulation is perfectly acceptable if it clearly proves the concept.
+1. **Phase 1: Zero-Trust CSP Handshake**
+   Before agents attempt to solve problems, they perform a simulated Constraint Satisfaction Protocol (CSP) handshake. They negotiate latency, encryption bounds, and processing buffers.
+2. **Phase 2: Semantic Vector Engine (The Fast Path)**
+   When an anomaly occurs (e.g., *"MySQL Connection Dropped"*), it is mathematically embedded into a 768-dimensional float array using the `nomic-embed-text` model. The system executes a **Cosine Similarity** search against the SQLite Fabric Ledger. If the mathematical meaning matches a previous problem by >85%, the system bypasses the LLM and instantly applies the cached solution in milliseconds.
+3. **Phase 3: Deep Reasoning (The Slow Path)**
+   If it is a completely novel problem, the system falls back to **LLaMA 3.2**. The LLM spends time reasoning through the IT issue and generating a breakthrough. 
+4. **Phase 4: Autonomous Guardrails & Chaos Defense**
+   Before a LLaMA breakthrough is pushed to the global Fabric, it must pass a strict security Guardrail. If the LLM hallucinates, generates malicious code (`rm -rf`), or returns a low confidence score, the update is blocked, preventing "Cognitive Poisoning".
 
-## Getting Started (Instructions for AI)
-1. **Architecture Proposal:** Propose an initial architecture outlining the Agent nodes, the Fabric layer (e.g., Redis, in-memory cache, or SQLite), the Guardrail component, and the Chaos Injector.
-2. **Schema Definition:** Outline the exact data schema for a "Cognitive Update" or "Insight" (e.g., condition, solution, context tags, confidence score).
-3. **Core Logic:** Write the implementation for the Guardrail logic and consistency model to ensure safety and prevent poisoning.
-4. **Simulation Setup:** Set up the simulated task flow to demonstrate the Ratchet Effect from start to finish.
+## 🛠️ Implementation Details
+
+- **Frontend:** React + TypeScript + Vite. Features a stunning, interactive HUD with an SVG Network Graph that physically models the mathematical vector clusters, real-time toast notifications, and interactive error-injection tools.
+- **Backend:** Node.js + Express + Socket.io for real-time bidirectional streaming.
+- **Database:** Standard SQLite transformed into a lightweight **Vector Database**. Instead of a heavy external service like Pinecone, we serialize 768-dimensional embeddings to SQLite and compute Cosine Similarity entirely in-memory using math algorithms.
+- **AI Models:** Local LLM execution via Ollama to guarantee zero data-exfiltration and absolute privacy. 
+  - `nomic-embed-text` (for instant semantic clustering)
+  - `llama3.2` (for complex, novel problem solving)
+
+## 🚀 How to Run Locally
+
+### 1. Prerequisites (Ollama)
+Because this system runs fully locally for maximum privacy, you must install **Ollama**.
+1. Download Ollama from [ollama.com](https://ollama.com).
+2. Open your terminal and pull the two required models:
+   ```bash
+   ollama pull nomic-embed-text
+   ollama pull llama3.2
+   ```
+
+### 2. Install Dependencies
+Open two terminal tabs in the root directory of this repository.
+
+**Terminal 1 (Backend):**
+```bash
+cd backend
+npm install
+```
+
+**Terminal 2 (Frontend):**
+```bash
+cd frontend
+npm install
+```
+
+### 3. Start the Cognition Fabric
+**Terminal 1 (Backend):**
+```bash
+# Starts the Node server and the SQLite Vector Engine on port 3001
+npx tsx src/server.ts
+```
+
+**Terminal 2 (Frontend):**
+```bash
+# Starts the Vite React Dashboard on port 5173
+npm run dev
+```
+
+### 4. Interactive Live Demo
+Open `http://localhost:5173` in your browser. 
+1. Click **Start Autonomous Simulation** to watch the agents generate insights and cluster them mathematically.
+2. Type a custom IT error (e.g., *"Kubernetes pod is crash-looping"*) into the top bar and click **Inject Problem** to watch the Mesh instantly adapt.
+3. Use the **Semantic Search** bar to manually query the Vector database and see the raw Cosine Similarity match percentage for yourself!
+4. Click **Inject Poison** to demonstrate how the Autonomous Guardrails block a rogue agent from destroying the cluster.
