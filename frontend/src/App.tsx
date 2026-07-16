@@ -17,7 +17,6 @@ function App() {
   const [cspActive, setCspActive] = useState<{a1: string, a2: string} | null>(null);
   const [cspLogs, setCspLogs] = useState<string[]>([]);
   
-  const logEndRef = useRef<HTMLDivElement>(null);
   const cspLogEndRef = useRef<HTMLDivElement>(null);
 
   const addLog = (msg: string, type: 'info'|'error'|'success'|'warn'|'ai'|'fast'|'csp'|'agentA'|'agentB'|'agentC' = 'info') => {
