@@ -137,6 +137,27 @@ function App() {
   };
 
   const [customError, setCustomError] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResult, setSearchResult] = useState<{match: Insight|null, similarity: number} | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
+
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) return;
+    setIsSearching(true);
+    setSearchResult(null);
+    try {
+      const res = await fetch('http://localhost:3001/api/fabric/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: searchQuery })
+      });
+      const data = await res.json();
+      setSearchResult(data);
+    } catch (err) {
+      addLog("Failed to reach search API.", "error");
+    }
+    setIsSearching(false);
+  };
 
   const injectPoison = async () => {
     addLog("[Chaos] Injecting manual poisoned vector update (rm -rf)...", 'warn');
@@ -227,7 +248,46 @@ function App() {
             Inject Problem
           </button>
         </div>
+        
+        {/* Manual Semantic Search UI */}
+        <div className="custom-inject-container">
+          <input 
+            type="text" 
+            placeholder="Search Fabric Memory..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="glass-input"
+            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+          />
+          <button className="primary" onClick={handleSearch} disabled={isSearching}>
+            {isSearching ? 'Searching...' : 'Semantic Search'}
+          </button>
+        </div>
       </div>
+
+      {searchResult && searchResult.match && (
+        <div className="search-result-banner" style={{ background: 'rgba(56, 189, 248, 0.1)', border: '1px solid #38bdf8', padding: '1rem', borderRadius: '8px', marginBottom: '1rem', display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+          <BrainCircuit size={24} color="#38bdf8" />
+          <div style={{ flex: 1 }}>
+            <h4 style={{ margin: '0 0 0.5rem 0', color: '#0284c7' }}>
+              Vector Match Found ({ (searchResult.similarity * 100).toFixed(1) }% Similarity)
+            </h4>
+            <p style={{ margin: '0 0 0.5rem 0', color: 'var(--text-main)' }}><strong>Signature:</strong> {searchResult.match.problem_signature}</p>
+            <p style={{ margin: 0, color: 'var(--text-main)' }}><strong>Solution:</strong> {searchResult.match.solution}</p>
+          </div>
+          <button className="danger" onClick={() => setSearchResult(null)} style={{ padding: '0.2rem 0.5rem' }}>✕</button>
+        </div>
+      )}
+      
+      {searchResult && !searchResult.match && (
+        <div className="search-result-banner" style={{ background: 'rgba(244, 63, 94, 0.1)', border: '1px solid #f43f5e', padding: '1rem', borderRadius: '8px', marginBottom: '1rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <ShieldAlert size={24} color="#f43f5e" />
+          <div style={{ flex: 1 }}>
+            <h4 style={{ margin: 0, color: '#be123c' }}>No semantic matches found in Fabric Memory.</h4>
+          </div>
+          <button className="danger" onClick={() => setSearchResult(null)} style={{ padding: '0.2rem 0.5rem' }}>✕</button>
+        </div>
+      )}
 
       {cspActive && (
         <div className="csp-banner">

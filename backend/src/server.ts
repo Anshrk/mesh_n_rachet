@@ -72,6 +72,23 @@ app.post('/api/insights', (req, res) => {
   }
 });
 
+// Manual Semantic Search endpoint
+import { generateEmbedding } from './ai';
+app.post('/api/fabric/search', async (req, res) => {
+  const { query } = req.body;
+  if (!query) return res.status(400).json({ error: 'Query is required' });
+
+  try {
+    const queryVector = await generateEmbedding(query);
+    // We pass 0.0 as threshold because we want to see the highest match regardless of score
+    fabric.findSemanticMatch(queryVector, 0.0, (match, similarity) => {
+      res.status(200).json({ match, similarity });
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to search semantic space' });
+  }
+});
+
 const PORT = 3001;
 server.listen(PORT, () => {
   console.log(`Cognition Fabric API running on port ${PORT}`);
