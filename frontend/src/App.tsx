@@ -9,7 +9,7 @@ const socket = io('http://localhost:3001');
 
 function App() {
   const [globalFabric, setGlobalFabric] = useState<Insight[]>([]);
-  const [logs, setLogs] = useState<{msg: string, type: string}[]>([]);
+  const [logs, setLogs] = useState<{id: string, msg: string, type: string}[]>([]);
   const [isSimulating, setIsSimulating] = useState(false);
   const [activeTask, setActiveTask] = useState<{agent: string, desc: string, status: string, similarity?: number} | null>(null);
   
@@ -20,8 +20,9 @@ function App() {
   const logEndRef = useRef<HTMLDivElement>(null);
   const cspLogEndRef = useRef<HTMLDivElement>(null);
 
-  const addLog = (msg: string, type: 'info'|'error'|'success'|'warn'|'ai'|'fast'|'csp' = 'info') => {
-    setLogs(prev => [...prev.slice(-49), { msg: `[${new Date().toLocaleTimeString()}] ${msg}`, type }]);
+  const addLog = (msg: string, type: 'info'|'error'|'success'|'warn'|'ai'|'fast'|'csp'|'agentA'|'agentB'|'agentC' = 'info') => {
+    const id = Math.random().toString(36).substring(7);
+    setLogs(prev => [...prev.slice(-30), { id, msg: `[${new Date().toLocaleTimeString()}] ${msg}`, type }]);
   };
 
   useEffect(() => {
@@ -48,12 +49,18 @@ function App() {
 
     socket.on('csp_resolved', (data: any) => {
       setCspLogs(prev => [...prev, `[CSP] Contract Signed: Session ${data.session_id}`]);
-      setTimeout(() => setCspActive(null), 2500);
+      // The CSP Banner will now remain on screen to display the Latest Phase 1 Handshake
     });
 
     socket.on('agent_task_detected', (data: {agent_id: string, description: string}) => {
       setActiveTask({ agent: data.agent_id, desc: data.description, status: 'Scanning Vector Space...' });
-      addLog(`[${data.agent_id}] 📡 Anomaly detected: "${data.description}"`, "warn");
+      
+      let type: any = 'warn';
+      if (data.agent_id.includes('Alpha')) type = 'agentA';
+      if (data.agent_id.includes('Beta')) type = 'agentB';
+      if (data.agent_id.includes('Charlie')) type = 'agentC';
+      
+      addLog(`[${data.agent_id}] 📡 Anomaly detected: "${data.description}"`, type);
     });
 
     socket.on('agent_fast_path', (data: {agent_id: string, similarity_score: number, insight: Insight}) => {
@@ -130,6 +137,8 @@ function App() {
     }
   };
 
+  const [customError, setCustomError] = useState('');
+
   const injectPoison = async () => {
     addLog("[Chaos] Injecting manual poisoned vector update (rm -rf)...", 'warn');
     await fetch('http://localhost:3001/api/insights', {
@@ -143,6 +152,21 @@ function App() {
         metadata: { malicious: true }
       })
     });
+  };
+
+  const handleInjectCustom = async () => {
+    if (!customError.trim()) return;
+    try {
+      await fetch(`http://localhost:3001/api/simulation/inject`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ description: customError })
+      });
+      addLog(`Audience Injection: "${customError}"`, 'warn');
+      setCustomError('');
+    } catch (e) {
+      addLog("Failed to reach server.", "error");
+    }
   };
 
   return (
@@ -178,10 +202,10 @@ function App() {
         </div>
       </div>
 
-      <div className="controls">
+      <div className="controls" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
         <button className={isSimulating ? 'danger' : 'primary'} onClick={toggleSimulation}>
           {isSimulating ? <Square size={18} /> : <Play size={18} />} 
-          {isSimulating ? 'Stop Autonomous Simulation' : 'Start Autonomous Simulation'}
+          {isSimulating ? 'Pause Autonomous Simulation' : 'Start Autonomous Simulation'}
         </button>
         <button className="danger" onClick={clearCache}>
           <Zap size={18} /> Wipe Fabric Cache
@@ -189,15 +213,30 @@ function App() {
         <button className="danger" onClick={injectPoison}>
           <ShieldAlert size={18} /> Inject Poison
         </button>
+
+        {/* Custom Injection UI */}
+        <div className="custom-inject-container">
+          <input 
+            type="text" 
+            placeholder="Type a custom IT error..." 
+            value={customError}
+            onChange={(e) => setCustomError(e.target.value)}
+            className="glass-input"
+            onKeyDown={(e) => e.key === 'Enter' && handleInjectCustom()}
+          />
+          <button className="primary" onClick={handleInjectCustom}>
+            Inject Problem
+          </button>
+        </div>
       </div>
 
       {cspActive && (
         <div className="csp-banner">
           <div className="csp-header">
             <Activity className="spinner" />
-            <h3 style={{ margin: 0 }}>Phase 1 CSP Handshake: {cspActive.a1} ⚡ {cspActive.a2}</h3>
+            <h3 style={{ margin: 0 }}>Latest Phase 1 CSP Handshake: {cspActive.a1} ⚡ {cspActive.a2}</h3>
           </div>
-          <div className="csp-logs">
+          <div className="csp-logs" style={{ maxHeight: '120px', overflowY: 'auto' }}>
             {cspLogs.map((log, i) => (
               <div key={i}>{log}</div>
             ))}
@@ -206,7 +245,7 @@ function App() {
         </div>
       )}
 
-      {activeTask && !cspActive && (
+      {activeTask && (
         <div className="active-task-banner">
           <Activity className="spinner" />
           <div style={{ flex: 1 }}>
@@ -226,18 +265,20 @@ function App() {
             <h2>Breakthrough Matrix (Vector Space)</h2>
           </div>
           <div className="panel-split">
-            <div>
-              <h3 style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Autonomous Learning Logs</h3>
-              <div className="log-box" style={{ height: '400px' }}>
-                {logs.map((log, i) => (
-                  <div key={i} className={`log-entry log-${log.type}`}>
+            <div style={{ position: 'relative', height: '400px', overflowY: 'auto', paddingRight: '10px' }}>
+              <h3 style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.5rem', position: 'sticky', top: 0, background: 'rgba(15, 23, 42, 0.95)', zIndex: 5, padding: '0.5rem 0' }}>Autonomous Learning Logs</h3>
+              
+              {/* Toast Notification Container */}
+              <div className="toast-container">
+                {logs.map((log) => (
+                  <div key={log.id} className={`toast toast-${log.type}`}>
                     {log.type === 'ai' ? <span style={{color: '#c9a4ff'}}>✨ </span> : ''}
                     {log.type === 'fast' ? <span style={{color: '#5fd99a'}}>⚡ </span> : ''}
                     {log.msg}
                   </div>
                 ))}
-                <div ref={logEndRef} />
               </div>
+
             </div>
             <div>
                <h3 style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Semantic Clusters (Cognition Fabric Vector Engine)</h3>

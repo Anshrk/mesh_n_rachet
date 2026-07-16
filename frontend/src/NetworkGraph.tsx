@@ -45,10 +45,10 @@ export const NetworkGraph: React.FC<NetworkGraphProps> = ({ insights }) => {
               onMouseLeave={() => setHoveredNode(null)}
               style={{ cursor: 'pointer' }}
             >
-              <circle cx={x} cy={y} r="12" fill="#ffffff" stroke="#0051ff" strokeWidth="3" />
-              <circle cx={x} cy={y} r="4" fill="#0051ff" />
-              <text x={x} y={y + 25} fill="#6b6b66" fontSize="10" textAnchor="middle" fontFamily="monospace">
-                Node_{i + 1}
+              <circle cx={x} cy={y} r="12" fill="var(--bg-main, #ffffff)" stroke="#38bdf8" strokeWidth="3" />
+              <circle cx={x} cy={y} r="4" fill="#38bdf8" />
+              <text x={x} y={y + 25} fill="var(--text-main, #333333)" fontSize="10" textAnchor="middle" fontFamily="monospace">
+                {insight.problem_signature.substring(0, 15)}{insight.problem_signature.length > 15 ? '...' : ''}
               </text>
             </g>
           );
@@ -56,9 +56,9 @@ export const NetworkGraph: React.FC<NetworkGraphProps> = ({ insights }) => {
 
         {/* Central Fabric Core */}
         <g className="fabric-core">
-          <circle cx={centerX} cy={centerY} r="35" fill="rgba(0, 81, 255, 0.06)" stroke="#0051ff" strokeWidth="2" className="core-pulse" />
-          <circle cx={centerX} cy={centerY} r="25" fill="rgba(0, 81, 255, 0.14)" stroke="#161616" strokeWidth="3" />
-          <text x={centerX} y={centerY + 50} fill="#161616" fontSize="12" textAnchor="middle" fontWeight="bold">
+          <circle cx={centerX} cy={centerY} r="35" fill="rgba(168, 85, 247, 0.1)" stroke="#a855f7" strokeWidth="2" className="core-pulse" />
+          <circle cx={centerX} cy={centerY} r="25" fill="rgba(168, 85, 247, 0.2)" stroke="#a855f7" strokeWidth="3" />
+          <text x={centerX} y={centerY + 50} fill="#a855f7" fontSize="12" textAnchor="middle" fontWeight="bold">
             Cognition Fabric
           </text>
         </g>
@@ -66,13 +66,13 @@ export const NetworkGraph: React.FC<NetworkGraphProps> = ({ insights }) => {
 
       {/* Floating HUD Tooltip */}
       {hoveredNode && (
-        <div className="node-tooltip">
-          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(22, 22, 22, 0.12)', paddingBottom: '0.5rem', marginBottom: '0.5rem' }}>
-            <span style={{ color: '#0051ff', fontWeight: 'bold' }}>{hoveredNode.problem_signature}</span>
+        <div className="node-tooltip" style={{ background: 'var(--bg-main, #ffffff)', border: '1px solid #38bdf8', color: 'var(--text-main, #333)', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(56, 189, 248, 0.3)', paddingBottom: '0.5rem', marginBottom: '0.5rem' }}>
+            <span style={{ color: '#0284c7', fontWeight: 'bold' }}>{hoveredNode.problem_signature}</span>
             <span className="badge badge-info">{(hoveredNode.confidence_score * 100).toFixed(0)}%</span>
           </div>
-          <p style={{ color: '#3d3d3a', margin: '0 0 0.5rem 0', fontSize: '0.9rem' }}>{hoveredNode.solution}</p>
-          <div style={{ fontSize: '0.75rem', color: '#6b6b66' }}>
+          <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', color: 'var(--text-main, #333)' }}>{hoveredNode.solution}</p>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted, #666)' }}>
             Origin: <strong>{hoveredNode.source_agent_id}</strong>
           </div>
         </div>
