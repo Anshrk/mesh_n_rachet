@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { io } from 'socket.io-client';
 import { Activity, ShieldAlert, Zap, BrainCircuit, Play, Square, GitMerge, Info } from 'lucide-react';
 import { NetworkGraph } from './NetworkGraph';
@@ -148,7 +148,8 @@ function App() {
   return (
     <div className="dashboard">
       <header className="header">
-        <h1>Autonomous Semantic Fabric</h1>
+        <span className="eyebrow">Internet of Cognition — Phase 2</span>
+        <h1>Autonomous <span className="accent">Semantic Fabric</span></h1>
         <p>Real-time Vector Matching & LLaMA 3.2 Continuous Learning</p>
       </header>
 
@@ -224,14 +225,14 @@ function App() {
             <GitMerge className="text-success" />
             <h2>Breakthrough Matrix (Vector Space)</h2>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2rem' }}>
+          <div className="panel-split">
             <div>
               <h3 style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Autonomous Learning Logs</h3>
               <div className="log-box" style={{ height: '400px' }}>
                 {logs.map((log, i) => (
                   <div key={i} className={`log-entry log-${log.type}`}>
-                    {log.type === 'ai' ? <span style={{color: '#a855f7'}}>✨ </span> : ''}
-                    {log.type === 'fast' ? <span style={{color: '#22c55e'}}>⚡ </span> : ''}
+                    {log.type === 'ai' ? <span style={{color: '#c9a4ff'}}>✨ </span> : ''}
+                    {log.type === 'fast' ? <span style={{color: '#5fd99a'}}>⚡ </span> : ''}
                     {log.msg}
                   </div>
                 ))}
