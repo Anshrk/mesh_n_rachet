@@ -40,6 +40,13 @@ app.post('/api/simulation/stop', (req, res) => {
   res.status(200).json({ message: 'Autonomous simulation stopped.' });
 });
 
+app.post('/api/simulation/inject', (req, res) => {
+  const { description } = req.body;
+  if (!description) return res.status(400).json({ error: 'Description is required' });
+  observer.injectProblem(description);
+  res.status(200).json({ message: 'Custom problem injected into the mesh.' });
+});
+
 // Clear cache endpoint for live demo
 app.post('/api/fabric/clear', (req, res) => {
   fabric.clearFabric(() => {

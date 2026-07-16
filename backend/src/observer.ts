@@ -11,6 +11,7 @@ export class AutonomousObserver {
   private agentIds = ["Agent_A_Alpha", "Agent_B_Beta", "Agent_C_Charlie"];
   private currentAgentIndex = 0;
   private currentProblemIndex = 0;
+  private pendingCustomProblem: { sig: string, desc: string } | null = null;
   
   // A simulated stream of problems that can happen over time
   // Some of these are semantically identical but worded differently!
@@ -25,6 +26,17 @@ export class AutonomousObserver {
   constructor(fabric: CognitionFabric, io: Server) {
     this.fabric = fabric;
     this.io = io;
+  }
+
+  public injectProblem(desc: string) {
+    const sig = `custom_${Math.random().toString(36).substring(7)}`;
+    this.pendingCustomProblem = { sig, desc };
+    
+    // Instantly trigger the loop so the audience doesn't have to wait 15 seconds
+    if (this.isRunning) {
+      if (this.loopInterval) clearTimeout(this.loopInterval);
+      this.runLoop();
+    }
   }
 
   public start() {
@@ -45,9 +57,15 @@ export class AutonomousObserver {
   private async runLoop() {
     if (!this.isRunning) return;
 
-    // Pick problems sequentially so the demo narrative is perfectly staged
-    const problem = this.problemStream[this.currentProblemIndex];
-    this.currentProblemIndex = (this.currentProblemIndex + 1) % this.problemStream.length;
+    let problem;
+    if (this.pendingCustomProblem) {
+      problem = this.pendingCustomProblem;
+      this.pendingCustomProblem = null;
+    } else {
+      // Pick problems sequentially so the demo narrative is perfectly staged
+      problem = this.problemStream[this.currentProblemIndex];
+      this.currentProblemIndex = (this.currentProblemIndex + 1) % this.problemStream.length;
+    }
     
     // Use Round-Robin instead of Random so Hackathon Judges are guaranteed to see cross-agent sharing!
     const activeAgent = this.agentIds[this.currentAgentIndex];
