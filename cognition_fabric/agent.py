@@ -14,7 +14,7 @@ class Agent:
     def on_fabric_update(self, insight: Insight):
         # We don't need to re-learn what we just broadcasted
         if insight.source_agent_id != self.agent_id:
-            print(f"[{self.agent_id}] 🧠 Local Context Updated: Learned solution for '{insight.problem_signature}' via Fabric broadcast.")
+            print(f"[{self.agent_id}] Local Context Updated: Learned solution for '{insight.problem_signature}' via Fabric broadcast.")
             self.local_memory[insight.problem_signature] = insight
 
     def handle_task(self, task: Task):
@@ -22,22 +22,22 @@ class Agent:
         
         # 1. Check Local Memory
         if task.id in self.local_memory:
-            print(f"[{self.agent_id}] ⚡ Fast Path: Reusing locally cached solution for '{task.id}'")
+            print(f"[{self.agent_id}] Fast Path: Reusing locally cached solution for '{task.id}'")
             self._apply_solution(task.id, self.local_memory[task.id].solution)
             return
 
         # 2. Check Global Fabric (The Ratchet Effect)
-        print(f"[{self.agent_id}] 🔍 Checking Cognition Fabric for existing insights...")
+        print(f"[{self.agent_id}] Checking Cognition Fabric for existing insights...")
         insight = self.fabric.query_insight(task.id)
         
         if insight:
-            print(f"[{self.agent_id}] 🚀 RATCHET EFFECT TRIGGERED! Found verified solution from {insight.source_agent_id} in global memory.")
+            print(f"[{self.agent_id}] RATCHET EFFECT TRIGGERED! Found verified solution from {insight.source_agent_id} in global memory.")
             self.local_memory[task.id] = insight # Cache locally
             self._apply_solution(task.id, insight.solution)
             return
 
         # 3. Novel Problem: Solve it
-        print(f"[{self.agent_id}] 🧪 Novel problem detected. Engaging local reasoning...")
+        print(f"[{self.agent_id}] Novel problem detected. Engaging local reasoning...")
         time.sleep(1) # Simulate thinking/computation
         solution, confidence = self._generate_solution(task)
         self._apply_solution(task.id, solution)
@@ -50,7 +50,7 @@ class Agent:
             source_agent_id=self.agent_id,
             metadata={"task_context": task.context}
         )
-        print(f"[{self.agent_id}] 💡 Proposing new insight to Fabric...")
+        print(f"[{self.agent_id}] Proposing new insight to Fabric...")
         self.fabric.publish_insight(new_insight)
 
     def _generate_solution(self, task: Task):
